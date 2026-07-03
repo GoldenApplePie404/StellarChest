@@ -3,4 +3,4 @@
 
 可以跟[Godot-Galgame-Framework](https://github.com/GoldenApplePie404/Godot-Galgame-Framework) 搭配使用
 
-目前还处于开发阶段,暂未公开至仓库!
+项目目前正在企划中......
