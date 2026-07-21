@@ -1,0 +1,147 @@
+import type { Config } from 'tailwindcss';
+import typography from '@tailwindcss/typography';
+
+/** Sakura Shoujo -- Anime Visual Novel Design System */
+const config: Config = {
+  content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
+  theme: {
+    extend: {
+      colors: {
+        sakura:       '#FF9BB5',
+        'sakura-light': '#FFC2D5',
+        'sakura-pale':  '#FFE4EC',
+        'sakura-dark':  '#F07A9A',
+        lavender:     '#C5B4E3',
+        'lavender-light': '#E0D6F2',
+        'lavender-pale':  '#F2EDF9',
+        sky:          '#8ECAE6',
+        'sky-light':  '#C5E6F5',
+        'sky-pale':   '#E8F4FA',
+        mint:         '#8DD7B8',
+        'mint-light': '#C3ECD8',
+        'mint-pale':  '#E5F8EF',
+        gold:         '#FFEAA7',
+        'gold-light': '#FFF3CC',
+        rose:         '#FFD4B8',
+        'rose-light': '#FFE8D8',
+        pearl:        '#FFFAF5',
+        'pearl-alt':  '#FFF5EC',
+        cloud:        '#FFFFFF',
+        ink:          '#4A3F45',
+        'ink-light':  '#7A6F75',
+        'ink-muted':  '#A89BA0',
+        'ink-faint':  '#D5CDD0',
+        // Legacy compatibility aliases
+        primary:      '#FF9BB5',
+        'primary-light': '#FFC2D5',
+        'primary-dark':  '#F07A9A',
+        secondary:    '#C5B4E3',
+        'secondary-light': '#E0D6F2',
+        accent:       '#FFD700',
+        background:   '#FFF5F9',
+        card:         '#FFFFFF',
+        'text-primary': '#4A3045',
+        'text-secondary': '#7A6575',
+        'text-muted': '#A895A0',
+        success:      '#98E8C8',
+        error:        '#FF6B7A',
+      },
+      borderRadius: {
+        xs:   '6px',
+        sm:   '10px',
+        DEFAULT: '16px',
+        md:   '16px',
+        lg:   '24px',
+        xl:   '32px',
+        full: '9999px',
+        btn:  '9999px',
+      },
+      fontFamily: {
+        sans:  ['var(--font-body)', '"PingFang SC"', '"Microsoft YaHei"', 'sans-serif'],
+        title: ['var(--font-title)', 'var(--font-anime)', 'serif'],
+        anime: ['var(--font-anime)', '"ZCOOL QingKe HuangYou"', '"PingFang SC"', 'sans-serif'],
+        body:  ['var(--font-body)', '"PingFang SC"', 'sans-serif'],
+      },
+      boxShadow: {
+        xs:    '0 1px 3px rgba(255,126,179,0.08)',
+        sm:    '0 2px 8px rgba(255,126,179,0.1)',
+        md:    '0 4px 16px rgba(200,162,232,0.12)',
+        lg:    '0 8px 32px rgba(255,126,179,0.15)',
+        xl:    '0 12px 48px rgba(200,162,232,0.2)',
+        glow:  '0 0 20px rgba(255,126,179,0.25), 0 0 60px rgba(200,162,232,0.12)',
+        inner: 'inset 0 1px 3px rgba(255,126,179,0.06)',
+        soft:  '0 2px 8px rgba(255,126,179,0.1)',
+        card:  '0 4px 16px rgba(200,162,232,0.12)',
+        hover: '0 8px 32px rgba(255,126,179,0.15)',
+        float: '0 8px 30px rgba(200,162,232,0.15)',
+      },
+      animation: {
+        'float':      'float 5s ease-in-out infinite',
+        'glow':       'glowPulse 3s ease-in-out infinite',
+        'twinkle':    'twinkle 2.5s ease-in-out infinite',
+        'fade-up':    'fadeUp 0.6s cubic-bezier(0.22,0.61,0.36,1) both',
+        'pop-in':     'popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both',
+        'shimmer':    'shimmer 2.5s infinite',
+        'heartbeat':  'heartbeat 1.8s ease-in-out infinite',
+        'border-glow': 'borderGlow 3s ease-in-out infinite',
+        'bounce-light': 'bounceLight 150ms ease-out',
+        'fade-in':    'fadeIn 300ms ease-out',
+        'text-appear': 'textAppear 500ms ease-out both',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+          '33%':      { transform: 'translateY(-8px) rotate(0.5deg)' },
+          '66%':      { transform: 'translateY(-3px) rotate(-0.5deg)' },
+        },
+        glowPulse: {
+          '0%, 100%': { boxShadow: '0 0 4px rgba(255,126,179,0.15)' },
+          '50%':      { boxShadow: '0 0 20px rgba(255,126,179,0.35), 0 0 40px rgba(200,162,232,0.15)' },
+        },
+        twinkle: {
+          '0%, 100%': { opacity: '0', transform: 'scale(0.3) rotate(0deg)' },
+          '50%':      { opacity: '0.8', transform: 'scale(1) rotate(180deg)' },
+        },
+        fadeUp: {
+          from: { opacity: '0', transform: 'translateY(24px)' },
+          to:   { opacity: '1', transform: 'translateY(0)' },
+        },
+        popIn: {
+          from: { opacity: '0', transform: 'scale(0.8)' },
+          to:   { opacity: '1', transform: 'scale(1)' },
+        },
+        shimmer: {
+          '0%':   { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+        heartbeat: {
+          '0%, 100%': { transform: 'scale(1)' },
+          '8%':       { transform: 'scale(1.1)' },
+          '16%':      { transform: 'scale(1)' },
+          '24%':      { transform: 'scale(1.05)' },
+          '32%':      { transform: 'scale(1)' },
+        },
+        borderGlow: {
+          '0%, 100%': { borderColor: 'rgba(255,126,179,0.15)' },
+          '50%':      { borderColor: 'rgba(255,126,179,0.35)' },
+        },
+        bounceLight: {
+          '0%':   { transform: 'scale(1)' },
+          '50%':  { transform: 'scale(1.02)' },
+          '100%': { transform: 'scale(1)' },
+        },
+        fadeIn: {
+          '0%':   { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        textAppear: {
+          from: { opacity: '0', transform: 'translateY(8px)' },
+          to:   { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
+    },
+  },
+  plugins: [typography],
+};
+
+export default config;

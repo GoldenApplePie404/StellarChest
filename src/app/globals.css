@@ -1,0 +1,912 @@
+/* ============================================
+   Galgame Toolkit -- Shoujo Anime Design System
+   Inspired by: visual novels, magical girl anime,
+   Japanese otome games, sakura aesthetics
+   ============================================ */
+@import "tailwindcss";
+
+/* ===== Font Variables ===== */
+:root {
+  --font-anime: var(--font-anime, sans-serif);
+  --font-title: var(--font-title, serif);
+  --font-body: var(--font-body, sans-serif);
+}
+
+/* ============================================
+   COLOR PALETTE -- Macaron Dreamy
+   ============================================ */
+:root {
+  --sakura:         #FF9BB5;
+  --sakura-light:   #FFC2D5;
+  --sakura-pale:    #FFE4EC;
+  --sakura-dark:    #F07A9A;
+  --lavender:       #C5B4E3;
+  --lavender-light: #E0D6F2;
+  --lavender-pale:  #F2EDF9;
+  --sky:            #8ECAE6;
+  --sky-light:      #C5E6F5;
+  --sky-pale:       #E8F4FA;
+  --mint:           #8DD7B8;
+  --mint-light:     #C3ECD8;
+  --mint-pale:      #E5F8EF;
+  --gold:           #FFEAA7;
+  --gold-light:     #FFF3CC;
+  --gold-pale:      #FFF9E6;
+  --rose:           #FFD4B8;
+  --rose-light:     #FFE8D8;
+  --pearl:          #FFFAF5;
+  --pearl-alt:      #FFF5EC;
+  --cloud:          #FFFFFF;
+  --ink:            #4A3F45;
+  --ink-light:      #7A6F75;
+  --ink-muted:      #A89BA0;
+  --ink-faint:      #D5CDD0;
+}
+
+/* ============================================
+   GRADIENTS
+   ============================================ */
+:root {
+  --gradient-sakura:   linear-gradient(135deg, #FF9BB5 0%, #C5B4E3 100%);
+  --gradient-sky:      linear-gradient(135deg, #8ECAE6 0%, #C5B4E3 100%);
+  --gradient-mint:     linear-gradient(135deg, #8DD7B8 0%, #8ECAE6 100%);
+  --gradient-gold:     linear-gradient(135deg, #FFEAA7 0%, #FFD4B8 100%);
+  --gradient-hero:     linear-gradient(160deg, #C5E6F5 0%, #FFC2D5 50%, #FFD4B8 100%);
+  --gradient-card:     linear-gradient(145deg, #FFFFFF 0%, #FFFAF5 50%, #F2EDF9 100%);
+  --gradient-panel:    linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,250,245,0.95) 100%);
+  --gradient-glass:    linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,245,236,0.7) 100%);
+  --gradient-text:     linear-gradient(135deg, #FF9BB5 0%, #C5B4E3 60%, #8ECAE6 100%);
+}
+
+/* ============================================
+   SHADOWS -- Soft & Dreamy
+   ============================================ */
+:root {
+  --shadow-xs:   0 1px 3px rgba(255,126,179,0.08);
+  --shadow-sm:   0 2px 8px rgba(255,126,179,0.1);
+  --shadow-md:   0 4px 16px rgba(200,162,232,0.12);
+  --shadow-lg:   0 8px 32px rgba(255,126,179,0.15);
+  --shadow-xl:   0 12px 48px rgba(200,162,232,0.2);
+  --shadow-glow: 0 0 20px rgba(255,126,179,0.25), 0 0 60px rgba(200,162,232,0.12);
+  --shadow-inner: inset 0 1px 3px rgba(255,126,179,0.06);
+  --radius-xs:   6px;
+  --radius-sm:   10px;
+  --radius-md:   16px;
+  --radius-lg:   24px;
+  --radius-xl:   32px;
+  --radius-full: 9999px;
+  --ease-out:    cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+html {
+  font-size: 18px;
+}
+body {
+  background-color: var(--pearl);
+  background-image:
+    /* Subtle diagonal stripe pattern */
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(255, 212, 184, 0.03) 40px,
+      rgba(255, 212, 184, 0.03) 41px
+    ),
+    /* Radial glow in corners */
+    radial-gradient(ellipse at 0% 0%, rgba(255,126,179,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 100%, rgba(200,162,232,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 20%, rgba(168,216,234,0.04) 0%, transparent 50%);
+  color: var(--ink);
+  font-family: var(--font-body), "PingFang SC", "Microsoft YaHei", sans-serif;
+  min-height: 100vh;
+  line-height: 1.75;
+  letter-spacing: 0.015em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography hierarchy */
+h1, .h1 {
+  font-family: var(--font-title), var(--font-anime), serif;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+h2, .h2 {
+  font-family: var(--font-anime), var(--font-title), sans-serif;
+  letter-spacing: 0.03em;
+  color: var(--sakura-dark);
+}
+h3, .h3 {
+  font-family: var(--font-anime), var(--font-title), sans-serif;
+  letter-spacing: 0.03em;
+  color: var(--lavender);
+}
+h4, h5, h6 {
+  font-family: var(--font-body), sans-serif;
+  color: var(--ink-light);
+}
+
+/* ============================================
+   PAGE TRANSITIONS
+   ============================================ */
+.page-transition {
+  animation: pageReveal 0.6s var(--ease-out) both;
+}
+@keyframes pageReveal {
+  from { opacity: 0; filter: blur(4px); transform: scale(0.98); }
+  to   { opacity: 1; filter: blur(0);  transform: scale(1); }
+}
+
+/* ============================================
+   ANIMATIONS -- Shoujo Magic Effects
+   ============================================ */
+
+/* Float gently */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33%      { transform: translateY(-8px) rotate(0.5deg); }
+  66%      { transform: translateY(-3px) rotate(-0.5deg); }
+}
+.animate-float { animation: float 5s ease-in-out infinite; }
+
+/* Soft pulse glow */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(255,126,179,0.15); }
+  50%      { box-shadow: 0 0 20px rgba(255,126,179,0.35), 0 0 40px rgba(200,162,232,0.15); }
+}
+.animate-glow { animation: glowPulse 3s ease-in-out infinite; }
+
+/* Sparkle twinkle */
+@keyframes twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.3) rotate(0deg); }
+  50%      { opacity: 0.8; transform: scale(1) rotate(180deg); }
+}
+.animate-twinkle { animation: twinkle 2.5s ease-in-out infinite; }
+
+/* Fade slide up */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fadeUp 0.6s var(--ease-out) both; }
+
+/* Scale bounce in */
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.animate-pop-in { animation: popIn 0.5s var(--ease-spring) both; }
+
+/* Sakura petal drift */
+@keyframes sakuraDrift {
+  0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  10%  { opacity: 0.5; }
+  90%  { opacity: 0.5; }
+  100% { transform: translate(-20px, 60px) rotate(45deg); opacity: 0; }
+}
+
+/* Shimmer sweep */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite;
+}
+
+/* Heartbeat */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  8%       { transform: scale(1.1); }
+  16%      { transform: scale(1); }
+  24%      { transform: scale(1.05); }
+  32%      { transform: scale(1); }
+}
+.animate-heartbeat { animation: heartbeat 1.8s ease-in-out infinite; }
+
+/* Border glow sweep */
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(255,126,179,0.15); }
+  50%      { border-color: rgba(255,126,179,0.35); }
+}
+.animate-border-glow { animation: borderGlow 3s ease-in-out infinite; }
+
+/* Text gradient reveal */
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Staggered card entrance */
+.card-stagger { opacity: 0; animation: fadeUp 0.5s var(--ease-out) forwards; }
+.card-stagger:nth-child(1) { animation-delay: 0.05s; }
+.card-stagger:nth-child(2) { animation-delay: 0.1s; }
+.card-stagger:nth-child(3) { animation-delay: 0.15s; }
+.card-stagger:nth-child(4) { animation-delay: 0.2s; }
+.card-stagger:nth-child(5) { animation-delay: 0.25s; }
+.card-stagger:nth-child(6) { animation-delay: 0.3s; }
+
+/* ============================================
+   COMPONENT STYLES
+   ============================================ */
+
+/* Glass card */
+.glass-card {
+  background: var(--gradient-glass);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,126,179,0.12);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.4s var(--ease-smooth);
+}
+.glass-card:hover {
+  border-color: rgba(255,126,179,0.25);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* Decorative card with top gradient accent */
+.accent-card {
+  position: relative;
+  background: var(--cloud);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.accent-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--gradient-sakura);
+  border-radius: 3px 3px 0 0;
+}
+
+/* Dialog box (VN style) */
+.vn-dialog {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(255,126,179,0.2);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+.vn-dialog::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  right: 24px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid rgba(255,126,179,0.2);
+}
+
+/* Gradient button */
+.gradient-btn {
+  background: var(--gradient-sakura);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 0.75rem 2rem;
+  font-family: var(--font-anime), sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s var(--ease-out);
+  cursor: pointer;
+}
+.gradient-btn:hover {
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-1px) scale(1.02);
+}
+.gradient-btn:active {
+  transform: scale(0.97);
+}
+
+/* Outline pill button */
+.pill-btn {
+  border: 1.5px solid rgba(255,126,179,0.3);
+  color: var(--sakura);
+  background: transparent;
+  border-radius: var(--radius-full);
+  padding: 0.6rem 1.5rem;
+  font-family: var(--font-anime), sans-serif;
+  font-weight: 500;
+  transition: all 0.3s var(--ease-out);
+  cursor: pointer;
+}
+.pill-btn:hover {
+  background: rgba(255,126,179,0.08);
+  border-color: var(--sakura);
+}
+
+/* ============================================
+   DECORATIVE ELEMENTS
+   ============================================ */
+
+/* Sparkle particle */
+.sparkle-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--gold);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+/* Section divider with diamond */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,126,179,0.2), transparent);
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track {
+  background: var(--pearl);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--sakura-light), var(--lavender-light));
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--sakura), var(--lavender));
+}
+
+/* ============================================
+   SELECTION
+   ============================================ */
+::selection {
+  background: rgba(255,126,179,0.2);
+  color: var(--sakura-dark);
+}
+
+/* ============================================
+   LINKS
+   ============================================ */
+a {
+  color: var(--sky);
+  transition: color 0.2s ease;
+  text-decoration: none;
+}
+a:hover { color: #6AB8D8; }
+
+/* ============================================
+   SELECTION
+   ============================================ */
+::selection {
+  background: rgba(141, 215, 184, 0.25);
+  color: var(--sakura-dark);
+}
+
+/* ============================================
+   GALGAME ENGINE (dark mode)
+   ============================================ */
+.galgame-dialog {
+  background: rgba(30, 15, 25, 0.82);
+  border-top: 2px solid var(--sakura);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.2);
+}
+
+/* ============================================
+   POST CONTENT — 论坛帖子内容样式
+   ============================================ */
+
+/* ---- Post content base ---- */
+.post-content {
+  font-size: 16px;
+  line-height: 1.9;
+  color: var(--ink);
+}
+
+.post-content h1.enhanced-h {
+  font-family: var(--font-title), serif;
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--sakura-dark);
+  margin: 2rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--gradient-sakura);
+  border-image: var(--gradient-sakura) 1;
+  position: relative;
+}
+.post-content h2.enhanced-h {
+  font-family: var(--font-anime), sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--sakura-dark);
+  margin: 1.8rem 0 0.8rem;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--sakura);
+}
+.post-content h3.enhanced-h {
+  font-family: var(--font-anime), sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--lavender);
+  margin: 1.4rem 0 0.6rem;
+  padding-left: 0.5rem;
+}
+.post-content p {
+  margin: 0.8rem 0;
+  color: var(--ink);
+}
+.post-content hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--sakura-light), transparent);
+  margin: 1.8rem 0;
+}
+
+/* ---- VS Code 风格代码块 ---- */
+.vscode-block {
+  margin: 1.2rem 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #1E1E2E;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.vscode-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: #181825;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.vscode-lang {
+  font-size: 12px;
+  font-weight: 600;
+  color: #A6ADC8;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.vscode-actions {
+  display: flex;
+  gap: 4px;
+}
+.vscode-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #6C7086;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.vscode-btn:hover {
+  background: rgba(255,255,255,0.08);
+  color: #CDD6F4;
+}
+.vscode-code-area {
+  display: flex;
+  overflow-x: auto;
+}
+.vscode-line-numbers {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 0;
+  min-width: 44px;
+  text-align: right;
+  background: #181825;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  user-select: none;
+}
+.vscode-line-number {
+  padding: 0 12px 0 8px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #6C7086;
+  font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+}
+.vscode-code-content {
+  flex: 1;
+  padding: 12px 0;
+  overflow-x: auto;
+}
+.vscode-code-line {
+  padding: 0 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #CDD6F4;
+  font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+  white-space: pre;
+  min-height: 1.6em;
+}
+
+/* VS Code 语法高亮 */
+.hl-comment  { color: #6C7086; font-style: italic; }
+.hl-string   { color: #A6E3A1; }
+.hl-keyword  { color: #CBA6F7; }
+.hl-number   { color: #FAB387; }
+.hl-function { color: #89B4FA; }
+.hl-type     { color: #F9E2AF; }
+.hl-variable { color: #94E2D5; }
+.hl-hexcolor { color: #F38BA8; }
+.hl-unit     { color: #89DCEB; }
+.hl-brace    { color: #CDD6F4; }
+
+/* ---- Mermaid 图表 ---- */
+.mermaid-wrapper {
+  margin: 1.5rem 0;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #FFFFFF 0%, #FFFAF5 100%);
+  border: 1px solid rgba(255,155,181,0.15);
+  box-shadow: 0 4px 16px rgba(200,162,232,0.1);
+  overflow: hidden;
+}
+.mermaid-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  color: var(--ink-light);
+  font-size: 14px;
+}
+.mermaid-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  color: #F38BA8;
+  font-size: 14px;
+  background: rgba(243,139,168,0.06);
+  flex-direction: column;
+  gap: 12px;
+}
+.mermaid-source-fallback {
+  max-width: 100%;
+  overflow-x: auto;
+  background: #1E1E2E;
+  color: #CDD6F4;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  line-height: 1.5;
+  white-space: pre;
+  text-align: left;
+}
+.mermaid-svg-container {
+  padding: 1.5rem;
+  overflow: auto;
+  max-height: 600px;
+  transition: all 0.2s;
+}
+.mermaid-svg-container svg {
+  display: block;
+  margin: 0 auto;
+}
+.mermaid-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: rgba(255,250,245,0.95);
+  border-top: 1px solid rgba(255,155,181,0.1);
+  gap: 4px;
+}
+.mermaid-toolbar-group {
+  display: flex;
+  gap: 4px;
+}
+.mermaid-tb-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255,155,181,0.15);
+  border-radius: 8px;
+  background: white;
+  color: var(--ink-light);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mermaid-tb-btn:hover {
+  background: var(--sakura-pale);
+  border-color: var(--sakura-light);
+  color: var(--sakura-dark);
+}
+.mermaid-tb-btn:active {
+  transform: scale(0.95);
+}
+
+/* ---- KaTeX 公式 ---- */
+.katex-inline {
+  display: inline;
+  padding: 0 0.1em;
+}
+.katex-block-wrapper {
+  margin: 1rem 0;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, rgba(255,250,245,0.8), rgba(242,237,249,0.8));
+  border-radius: 12px;
+  border: 1px solid rgba(200,162,232,0.12);
+  overflow-x: auto;
+  text-align: center;
+}
+.katex-block {
+  display: block;
+  text-align: center;
+}
+.katex .mathnormal { font-style: italic; }
+.katex .mord.text { font-family: var(--font-body), sans-serif; }
+
+/* ---- 表格 ---- */
+.table-wrapper {
+  margin: 1.2rem 0;
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255,155,181,0.12);
+  box-shadow: 0 2px 8px rgba(255,155,181,0.06);
+}
+.table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.table-wrapper thead {
+  background: linear-gradient(135deg, var(--sakura-pale), var(--lavender-pale));
+}
+.table-wrapper th {
+  padding: 12px 16px;
+  font-weight: 600;
+  color: var(--sakura-dark);
+  text-align: left;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  border-bottom: 2px solid var(--sakura-light);
+}
+.table-wrapper td {
+  padding: 10px 16px;
+  color: var(--ink);
+  border-bottom: 1px solid rgba(255,155,181,0.08);
+}
+.table-wrapper tbody tr {
+  transition: background 0.2s;
+}
+.table-wrapper tbody tr:hover {
+  background: rgba(255,155,181,0.04);
+}
+.table-wrapper tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ---- 引用块 ---- */
+.post-content blockquote {
+  margin: 1.2rem 0;
+  padding: 1rem 1.2rem 1rem 1.8rem;
+  background: linear-gradient(135deg, var(--sakura-pale), var(--pearl));
+  border-left: 4px solid var(--sakura);
+  border-radius: 0 12px 12px 0;
+  color: var(--ink-light);
+  font-style: normal;
+  position: relative;
+}
+.post-content blockquote::before {
+  content: '\201C';
+  position: absolute;
+  top: 4px;
+  left: 10px;
+  font-size: 2rem;
+  color: var(--sakura-light);
+  font-family: serif;
+  line-height: 1;
+  opacity: 0.5;
+}
+.post-content blockquote.nested-bq {
+  margin-left: 1.5rem;
+  border-left-color: var(--lavender-light);
+  background: linear-gradient(135deg, var(--lavender-pale), var(--pearl));
+}
+.post-content blockquote p {
+  margin: 0.3rem 0;
+}
+.post-content blockquote footer {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--ink-muted);
+}
+
+/* ---- 任务列表 ---- */
+.post-content ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0;
+}
+.post-content ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 4px 0;
+}
+.post-content ul[data-type="taskList"] li[data-checked="true"] {
+  color: var(--ink-muted);
+  text-decoration: line-through;
+}
+.post-content ul[data-type="taskList"] input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--sakura-light);
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  margin-top: 3px;
+  transition: all 0.2s;
+}
+.post-content ul[data-type="taskList"] input[type="checkbox"]:checked {
+  background: var(--sakura);
+  border-color: var(--sakura);
+}
+.post-content ul[data-type="taskList"] input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* ---- General list styling ---- */
+.post-content ul:not([data-type]) {
+  padding-left: 1.5rem;
+  list-style: none;
+}
+.post-content ul:not([data-type]) li {
+  position: relative;
+  padding-left: 0.5rem;
+  margin: 4px 0;
+}
+.post-content ul:not([data-type]) li::before {
+  content: '';
+  position: absolute;
+  left: -1rem;
+  top: 0.65em;
+  width: 6px;
+  height: 6px;
+  background: var(--gradient-sakura);
+  border-radius: 50%;
+}
+.post-content ol {
+  padding-left: 1.5rem;
+  counter-reset: item;
+}
+.post-content ol li {
+  margin: 4px 0;
+  padding-left: 0.3rem;
+  color: var(--ink);
+}
+.post-content ol li::marker {
+  color: var(--sakura);
+  font-weight: 600;
+}
+
+/* ---- Code inline ---- */
+.post-content code {
+  background: var(--lavender-pale);
+  color: var(--lavender);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  font-family: 'Cascadia Code', 'Fira Code', monospace;
+}
+
+/* ---- Links ---- */
+.post-content a {
+  color: var(--sky);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(142,202,230,0.3);
+  transition: all 0.2s;
+}
+.post-content a:hover {
+  color: #6AB8D8;
+  border-bottom-color: #6AB8D8;
+}
+
+/* ---- Images ---- */
+.post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin: 0.5rem 0;
+  box-shadow: 0 2px 8px rgba(255,155,181,0.08);
+}
+
+/* ---- Decorative elements ---- */
+.post-content hr {
+  margin: 2rem 0;
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--sakura-light), var(--lavender-light), var(--sakura-light), transparent);
+}
+
+/* ============================================
+   HOME HERO -- Aurora depth & texture
+   ============================================ */
+.magnetic-btn { will-change: transform; }
+.magnetic-btn:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 8px 28px rgba(255,255,255,0.3) !important;
+}
+.magnetic-btn:active { transform: translateY(0) scale(0.98); }
+@keyframes auroraDrift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(36px, -28px, 0) scale(1.12); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+.aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(64px);
+  opacity: 0.55;
+  animation: auroraDrift 16s ease-in-out infinite;
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* ============================================
+   MODULE CARD -- cursor spotlight + shine sweep
+   ============================================ */
+@keyframes moduleShine {
+  0%   { left: -60%; opacity: 0; }
+  20%  { opacity: 0.7; }
+  60%  { opacity: 0.5; }
+  100% { left: 130%; opacity: 0; }
+}
+.module-shine {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+  left: -60%;
+  opacity: 0;
+}
+.group:hover .module-shine { animation: moduleShine 1.1s ease-in-out; }
+
+/* ============================================
+   REDUCED MOTION -- accessibility guard
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob,
+  .animate-float,
+  .animate-twinkle,
+  .animate-glow,
+  .animate-heartbeat,
+  .animate-shimmer { animation: none !important; }
+  .module-card { transition: box-shadow 0.3s ease, border-color 0.3s ease !important; }
+}

@@ -1,0 +1,39 @@
+sequenceDiagram
+    actor User as 创作者
+    participant Editor as Monaco编辑器
+    participant FlowPanel as EnhancedFlowChart<br/>(右侧面板)
+    participant Parser as ScriptParser
+    participant Dagre as Dagre布局引擎
+    participant ReactFlow as @xyflow/react
+
+    %% 初始加载
+    User->>Editor: 打开项目编辑器
+    Editor->>FlowPanel: scriptText = 当前脚本内容
+    FlowPanel->>Parser: parse(scriptText)
+    Parser-->>FlowPanel: {lines, labelMap, chapterMap, choiceBlocks}
+    FlowPanel->>FlowPanel: 将解析结果转为 FlowNode[] + FlowEdge[]
+    FlowPanel->>Dagre: 计算自动布局坐标
+    Dagre-->>FlowPanel: 每个节点的x/y位置
+    FlowPanel->>ReactFlow: setNodes(nodes), setEdges(edges)
+    ReactFlow-->>FlowPanel: 渲染流程图
+    FlowPanel-->>User: 显示节点连线图
+
+    %% 实时刷新
+    User->>Editor: 编辑脚本（新增 @label scene2 / @jump label=scene2）
+    Editor->>FlowPanel: onChange 触发，300ms 防抖
+    FlowPanel->>Parser: parse(updatedScriptText)
+    Parser-->>FlowPanel: 新解析结果
+    FlowPanel->>FlowPanel: 检测无效跳转 + 孤立标签
+    FlowPanel->>Dagre: 重新布局
+    Dagre-->>FlowPanel: 新坐标
+    FlowPanel->>ReactFlow: updateNodes, updateEdges
+    ReactFlow-->>FlowPanel: 流程图更新
+    FlowPanel-->>User: 实时更新的流程图
+
+    %% 点击跳转
+    User->>ReactFlow: 单击某节点
+    ReactFlow->>FlowPanel: onNodeClick(node)
+    FlowPanel->>FlowPanel: 获取 node.data.lineIndex
+    FlowPanel->>Editor: dispatchEvent(galgame-goto-line, {line: lineIndex+1})
+    Editor->>Editor: 滚动到对应行 + 添加高亮装饰
+    Editor-->>User: 编辑器定位到该行

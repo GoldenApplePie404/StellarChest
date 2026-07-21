@@ -1,0 +1,10 @@
+# Galgame Toolkit 数据目录占位文件
+# 此文件确保 data/ 目录在版本控制中被保留
+# 实际数据库和上传文件不应提交到仓库
+
+数据目录结构：
+- galgame_toolkit.db  SQLite数据库文件（开发阶段）
+- uploads/images/     用户上传的图片素材
+- uploads/audio/      用户上传的音频素材
+- uploads/projects/   项目文件存储
+- exports/            项目导出文件临时存储

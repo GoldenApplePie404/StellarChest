@@ -1,0 +1,342 @@
+// Galgame Toolkit 数据模型定义
+// Prisma ORM - 支持 SQLite（开发）和 PostgreSQL（生产）无缝切换
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// 用户模型 - 支持邮箱注册，JWT鉴权
+model User {
+  id           String   @id @default(uuid()) @map("_id")
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  nickname     String   @default("创作者")
+  avatarUrl    String?  @map("avatar_url") @default("")
+  role         String   @default("user") // user | admin
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // 关联关系
+  projects     Project[]
+  assets       Asset[]
+  forumPosts   ForumPost[]
+  comments     Comment[]
+  aiConfigs    AIConfig[]
+  aiPrompts    AIPrompt[]
+  aiKnowledgeBases AIKnowledgeBase[]
+  aiMcpServers AIMcpServer[]
+  aiAgents     AIAgent[]
+  aiConversations AIConversation[]
+  notifications Notification[]
+
+  @@map("users")
+}
+
+// 项目模型 - galgame创作项目
+model Project {
+  id          String   @id @default(uuid()) @map("_id")
+  userId      String   @map("user_id")
+  name        String
+  description String   @default("")
+  coverUrl    String?  @map("cover_url") @default("")
+  status      String   @default("draft") // draft | published | archived
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  viewCount   Int      @default(0) @map("view_count")
+  playCount   Int      @default(0) @map("play_count")
+  tags        String   @default("[]")               // JSON 数组字符串
+  screenshots String   @default("[]")               // JSON 数组字符串（截图URL列表）
+  publishedAt DateTime? @map("published_at")
+
+  // 关联关系
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  files       ProjectFile[]
+  config      ProjectConfig?
+  assets      ProjectAsset[]
+  collaborators ProjectCollaborator[]
+
+  @@map("projects")
+}
+
+// 项目本地素材库 - 立绘/背景/音频等，按项目隔离，关联脚本 @bg/@audio 指令
+model ProjectAsset {
+  id        String   @id @default(uuid()) @map("_id")
+  projectId String   @map("project_id")
+  kind      String   @default("background") @map("kind") // character | background | audio
+  name      String
+  fileKey   String   @map("file_key") // 相对于 PROJECT_UPLOAD_DIR 的存储路径（脚本引用用）
+  fileUrl   String   @map("file_url") // 对外访问 URL
+  createdAt DateTime @default(now()) @map("created_at")
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_assets")
+}
+
+// 项目协作者（多人协作雏形，非实时同步）
+model ProjectCollaborator {
+  id        String   @id @default(uuid()) @map("_id")
+  projectId String   @map("project_id")
+  userId    String   @map("user_id") // 协作者用户ID
+  role      String   @default("editor") @map("role") // owner | editor | viewer
+  status    String   @default("active") @map("status") // active | pending
+  createdAt DateTime @default(now()) @map("created_at")
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@map("project_collaborators")
+}
+
+// 项目文件模型 - 脚本文件、素材文件等
+model ProjectFile {
+  id          String   @id @default(uuid()) @map("_id")
+  projectId   String   @map("project_id")
+  filename    String
+  fileType    String   @map("file_type") // script | image | audio | config | other
+  storagePath String   @map("storage_path")
+  fileSize    Int      @default(0) @map("file_size")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // 关联关系
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_files")
+}
+
+// 项目配置模型 - 入口脚本、角色映射、资源映射等
+model ProjectConfig {
+  projectId      String   @id @map("project_id")
+  entryScript    String   @default("main.txt") @map("entry_script")
+  characterIds   String   @default("[]") @map("character_ids") // JSON数组字符串
+  resourceMap    String   @default("{}") @map("resource_map") // JSON对象字符串
+  dialogStyle    String   @default("normal") @map("dialog_style") // normal | none | fullscreen
+  textSpeed      String   @default("normal") @map("text_speed") // fast | normal | slow
+  autoSave       Boolean  @default(false) @map("auto_save")
+
+  // 关联关系
+  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_configs")
+}
+
+// 素材模型 - 共享资源库（UI组件、贴图、音效、立绘、背景图）
+model Asset {
+  id            String   @id @default(uuid()) @map("_id")
+  userId        String   @map("user_id")
+  category      String   // ui_component | texture | sound_effect | character_sprite | background | other
+  name          String
+  description   String   @default("")
+  fileUrl       String   @map("file_url")
+  thumbnailUrl  String?  @map("thumbnail_url") @default("")
+  licenseType   String   @default("CC0") @map("license_type") // CC0 | CC-BY | custom
+  downloadCount Int      @default(0) @map("download_count")
+  tags          String   @default("[]") // JSON数组字符串
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  // 关联关系
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("assets")
+}
+
+// 论坛帖子模型 - 分类讨论（创作交流/素材分享/技术求助/作品展示）
+model ForumPost {
+  id           String   @id @default(uuid()) @map("_id")
+  userId       String   @map("user_id")
+  category     String   // creation_exchange | asset_share | tech_help | work_show
+  title        String
+  content      String
+  viewCount    Int      @default(0) @map("view_count")
+  commentCount Int      @default(0) @map("comment_count")
+  isPinned     Boolean  @default(false) @map("is_pinned")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // 关联关系
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments     Comment[]
+
+  @@map("forum_posts")
+}
+
+// 通知模型 - 评论回复/系统通知
+model Notification {
+  id        String   @id @default(uuid()) @map("_id")
+  userId    String   @map("user_id")  // 接收通知的用户
+  type      String   // comment_reply | system
+  title     String
+  content   String   @default("")
+  relatedId String?  @map("related_id")  // 关联的帖子/项目ID
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // 关联关系
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+// 评论模型 - 论坛帖子评论
+model Comment {
+  id        String   @id @default(uuid()) @map("_id")
+  postId    String   @map("post_id")
+  userId    String   @map("user_id")
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // 关联关系
+  post      ForumPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+// AI配置模型 - 每用户每模态一组（chat|image|music|video|voice）
+model AIConfig {
+  id          String   @id @default(uuid()) @map("_id")
+  userId      String   @map("user_id")
+  modality    String   @map("modality")      // chat|image|music|video|voice
+  provider    String   @default("openai_compatible")
+  apiEndpoint String   @map("api_endpoint") @default("")
+  apiKey      String   @map("api_key") @default("")
+  model       String   @default("")
+  enabled     Boolean  @default(true) @map("enabled")
+  reasoningEffort String @default("") @map("reasoning_effort") // chat 模态推理档位: ''|none|low|medium|high
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // 关联关系
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, modality])                  // 每用户每模态唯一
+  @@map("ai_configs")
+}
+
+// AI Prompt 模板库
+model AIPrompt {
+  id        String   @id @default(uuid()) @map("_id")
+  userId    String   @map("user_id")
+  title     String
+  category  String   @default("通用") @map("category")
+  content   String                       // 支持 {{变量}} 占位
+  variables String?  @map("variables")   // JSON: [{name,default}]
+  isPublic  Boolean  @default(false) @map("is_public")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ai_prompts")
+}
+
+// 知识库
+model AIKnowledgeBase {
+  id         String   @id @default(uuid()) @map("_id")
+  userId     String   @map("user_id")
+  name       String
+  desc       String?  @map("desc")
+  embedModel String   @default("text-embedding") @map("embed_model")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  docs       AIKnowledgeDoc[]
+
+  @@map("ai_kb")
+}
+
+// 知识库文档
+model AIKnowledgeDoc {
+  id        String   @id @default(uuid()) @map("_id")
+  kbId      String   @map("kb_id")
+  title     String
+  fileType  String   @map("file_type")
+  status    String   @default("pending") @map("status") // pending|chunked|embedded|failed
+  createdAt DateTime @default(now()) @map("created_at")
+
+  kb        AIKnowledgeBase   @relation(fields: [kbId], references: [id], onDelete: Cascade)
+  chunks    AIKnowledgeChunk[]
+
+  @@map("ai_kb_docs")
+}
+
+// 知识库切片（轻量向量：embedding 以 JSON 数组存 text 列）
+model AIKnowledgeChunk {
+  id        String   @id @default(uuid()) @map("_id")
+  docId     String   @map("doc_id")
+  content   String
+  embedding String?  @map("embedding")   // JSON 数组
+  idx       Int
+  doc       AIKnowledgeDoc @relation(fields: [docId], references: [id], onDelete: Cascade)
+
+  @@map("ai_kb_chunks")
+}
+
+// MCP 连接器
+model AIMcpServer {
+  id        String   @id @default(uuid()) @map("_id")
+  userId    String   @map("user_id")
+  name      String
+  command   String?  @map("command")      // stdio: npx -y @xx/mcp
+  args      String?  @map("args")         // JSON 数组
+  url       String?  @map("url")          // sse/http 型
+  env       String?  @map("env")          // JSON: 密钥等
+  status    String   @default("idle") @map("status") // idle|connected|error
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ai_mcp_servers")
+}
+
+// AI-Agent 编排
+model AIAgent {
+  id        String   @id @default(uuid()) @map("_id")
+  userId    String   @map("user_id")
+  name      String
+  role      String                       // 角色设定（system prompt）
+  toolset   String   @default("{}") @map("toolset") // JSON: {prompts:[], kb:[], mcp:[], web:bool}
+  model     String   @default("")        // 使用的 chat 模型
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ai_agents")
+}
+
+// AI 会话
+model AIConversation {
+  id        String   @id @default(uuid()) @map("_id")
+  userId    String   @map("user_id")
+  title     String
+  modality  String   @default("chat") @map("modality") // 主模态上下文
+  agentId   String?  @map("agent_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  AIMessage[]
+
+  @@map("ai_conversations")
+}
+
+// AI 消息
+model AIMessage {
+  id        String   @id @default(uuid()) @map("_id")
+  convId    String   @map("conv_id")
+  role      String                       // user|assistant|system
+  content   String
+  modality  String?  @map("modality")    // 若该条是图片/音乐等结果
+  assetUrl  String?  @map("asset_url")   // 多模态产物
+  createdAt DateTime @default(now()) @map("created_at")
+
+  conv      AIConversation @relation(fields: [convId], references: [id], onDelete: Cascade)
+
+  @@map("ai_messages")
+}

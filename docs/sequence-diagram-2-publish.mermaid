@@ -1,0 +1,45 @@
+sequenceDiagram
+    actor Creator as 创作者
+    participant ProjPage as 项目详情页
+    participant PubModal as 发布弹窗
+    participant PublishSvc as PublishService
+    participant DB as SQLite数据库
+    actor Player as 访客玩家
+    participant ExploreP as 探索列表页
+    participant PlayPage as play/[id] 游玩页
+    participant Engine as VN引擎(GameCanvas)
+
+    %% 发布流程
+    Creator->>ProjPage: 点击「发布作品」
+    ProjPage->>PubModal: 打开发布配置弹窗
+    Creator->>PubModal: 填写简介/封面/标签
+    Creator->>PubModal: 点击「确认发布」
+    PubModal->>PublishSvc: publishProject(id, userId, config)
+    PublishSvc->>DB: 更新 Project.status = 'published'
+    PublishSvc->>DB: 更新 publishedAt, tags, screenshots
+    PublishSvc-->>PubModal: {shareUrl: '/play/abc-123'}
+    PubModal-->>Creator: 显示分享链接 + 复制按钮
+    Creator->>PubModal: 点击「复制链接」
+
+    %% 访客浏览列表
+    Player->>ExploreP: 访问 /explore
+    ExploreP->>PublishSvc: listPublished(page=1, sortBy='popular')
+    PublishSvc->>DB: 查询 published 项目 + 排序
+    DB-->>PublishSvc: 返回项目列表
+    PublishSvc-->>ExploreP: PublishedProjectSummary[]
+    ExploreP-->>Player: 展示作品卡片网格
+
+    %% 访客游玩
+    Player->>PlayPage: 点击作品卡片 /play/abc-123
+    PlayPage->>PublishSvc: recordView('abc-123', ip)
+    PublishSvc->>DB: 更新 Project.viewCount += 1
+    PlayPage->>PublishSvc: getPublishedProject('abc-123')
+    PublishSvc->>DB: 查询项目 + 配置 + 资源映射
+    DB-->>PublishSvc: 项目数据
+    PublishSvc-->>PlayPage: 项目完整数据
+    PlayPage-->>Player: 显示作品详情页（封面/信息/统计/开始游玩按钮）
+    Player->>PlayPage: 点击「开始游玩」
+    PlayPage->>PublishSvc: recordPlay('abc-123', sessionId)
+    PublishSvc->>DB: 更新 Project.playCount += 1
+    PlayPage->>Engine: 启动 VN 引擎
+    Engine-->>Player: 全屏游戏体验

@@ -1,0 +1,7 @@
+@chapter 第一章 - 启程
+
+@bg default
+
+旁白：新的故事即将开始...
+
+@chapter_end

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#C5E8B7"/>
+  <rect x="0" y="400" width="800" height="200" fill="#7CB342"/>
+  <ellipse cx="100" cy="380" rx="80" ry="100" fill="#66BB6A"/>
+  <ellipse cx="100" cy="340" rx="60" ry="70" fill="#81C784"/>
+  <rect x="80" y="280" width="40" height="60" fill="#5D4037"/>
+  <ellipse cx="300" cy="360" rx="100" ry="120" fill="#4CAF50"/>
+  <ellipse cx="300" cy="320" rx="75" ry="85" fill="#66BB6A"/>
+  <rect x="280" y="240" width="40" height="60" fill="#5D4037"/>
+  <ellipse cx="550" cy="370" rx="70" ry="90" fill="#81C784"/>
+  <ellipse cx="550" cy="340" rx="50" ry="60" fill="#A5D6A7"/>
+  <rect x="530" y="280" width="40" height="50" fill="#5D4037"/>
+  <!-- sun -->
+  <circle cx="700" cy="80" r="50" fill="#FFF59D"/>
+  <circle cx="700" cy="80" r="50" fill="#FFEE58" opacity="0.3"/>
+  <!-- bench -->
+  <rect x="350" y="380" width="80" height="8" rx="2" fill="#795548"/>
+  <rect x="355" y="388" width="4" height="12" fill="#5D4037"/>
+  <rect x="425" y="388" width="4" height="12" fill="#5D4037"/>
+  <!-- flowers -->
+  <circle cx="150" cy="390" r="5" fill="#FF4081"/>
+  <circle cx="160" cy="395" r="4" fill="#FF80AB"/>
+  <circle cx="500" cy="395" r="5" fill="#FF4081"/>
+  <circle cx="510" cy="390" r="4" fill="#E040FB"/>
+</svg>

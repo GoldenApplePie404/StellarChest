@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6B3FA0"/>
+      <stop offset="50%" stop-color="#FF7EB3"/>
+      <stop offset="100%" stop-color="#7EC8E3"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="240" rx="8" fill="url(#bg)"/>
+  <text x="200" y="112" text-anchor="middle" font-family="sans-serif" font-size="28" font-weight="bold" fill="#FFFFFF" opacity="0.9">星之匣</text>
+  <text x="200" y="140" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#FFFFFF" opacity="0.5">StellarChest</text>
+</svg>

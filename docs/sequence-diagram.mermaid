@@ -1,0 +1,80 @@
+sequenceDiagram
+    participant User
+    participant TransportBar
+    participant DAWStore
+    participant PlaybackEngine
+    participant SynthManager
+    participant EffectBus
+    participant ToneDestination
+
+    User->>TransportBar: 点击 Play
+    TransportBar->>DAWStore: play()
+    DAWStore->>PlaybackEngine: start(bpm, loop)
+    
+    Note over PlaybackEngine: 读取当前 arrangement<br/>或 activePattern
+
+    PlaybackEngine->>DAWStore: getTracks()
+    PlaybackEngine->>DAWStore: getPatterns()
+    PlaybackEngine->>DAWStore: getArrangement()
+    
+    loop 每条 Track
+        PlaybackEngine->>SynthManager: createSynth(trackId, instrument)
+        SynthManager->>SynthManager: 创建 Tone.Synth / Sampler / Player
+        PlaybackEngine->>EffectBus: connectTrack(trackId, effectSlots)
+        EffectBus->>EffectBus: 构建音频节点链
+        SynthManager-->>EffectBus: synth.output → effect chain
+        EffectBus-->>ToneDestination: wet signal out
+    end
+
+    Note over PlaybackEngine: 创建 Tone.Sequence<br/>逐个 Pattern 调度
+
+    PlaybackEngine->>Tone.Transport: start()
+    loop 每 50ms
+        PlaybackEngine->>Tone.Transport: position
+        PlaybackEngine->>DAWStore: updatePosition(seconds)
+        EffectBus->>DAWStore: updateLevels(L, R)
+    end
+
+    Note over PlaybackEngine,ToneDestination: 效果器链路详情
+
+    participant Synth as Synth/Sampler
+    participant PreGain as PreGain
+    participant Panner as Panner
+    participant FX1 as Reverb
+    participant FX2 as Delay
+    participant FX3 as Filter
+    participant DryWet as Dry/Wet Bus
+    participant Master as Master
+
+    Synth->>PreGain: signal
+    PreGain->>Panner: gain-adjusted
+    Panner->>FX1: panned signal
+    FX1-->>DryWet: wet signal
+    Panner->>DryWet: dry signal
+    DryWet->>FX2: mixed
+    FX2->>FX3: delayed
+    FX3->>Master: filtered
+    Master->>ToneDestination: master volume
+
+    Note over User,DAWStore: MIDI 导入流程
+
+    participant BrowserPanel
+    participant MIDIImporter
+    participant PatternSlice
+    participant TrackSlice
+
+    User->>BrowserPanel: 拖入 .mid 文件
+    BrowserPanel->>MIDIImporter: importMIDI(File)
+    MIDIImporter->>@tonejs/midi: Midi.fromArrayBuffer()
+    @tonejs/midi-->>MIDIImporter: Midi object
+    
+    loop 每个 Track in MIDI
+        MIDIImporter->>TrackSlice: addTrack(name, piano)
+        MIDIImporter->>PatternSlice: addPattern(name, length)
+        loop 每个 Note in Track
+            MIDIImporter->>PatternSlice: addNote(patternId, note)
+        end
+    end
+    
+    PatternSlice-->>BrowserPanel: { patterns, tracks }
+    BrowserPanel-->>User: 导入完成

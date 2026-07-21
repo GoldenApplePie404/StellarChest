@@ -1,0 +1,49 @@
+sequenceDiagram
+    actor User as 创作者
+    participant SB as SceneBuilder<br/>(场景搭建器)
+    participant AssetP as AssetPanel<br/>(资源面板)
+    participant Canvas as SceneBuilderCanvas<br/>(WYSIWYG画布)
+    participant LayerMgr as LayerManager<br/>(渲染引擎)
+    participant PropP as PropertyPanel<br/>(属性面板)
+    participant ExportM as ExportPreviewModal<br/>(导出弹窗)
+    participant Editor as Monaco编辑器
+
+    User->>SB: 打开场景搭建器（从编辑器侧面板）
+    SB->>AssetP: 加载项目资源列表
+    AssetP-->>AssetP: fetch /api/assets?category=background
+    AssetP-->>AssetP: fetch /api/assets?category=character_sprite
+
+    User->>AssetP: 点击选择背景图「樱花树下」
+    AssetP->>SB: onSelectBackground('bg_sakura')
+    SB->>Canvas: updateBackground('bg_sakura')
+    Canvas->>LayerMgr: renderBackground('/assets/bg_sakura.png', 'fade')
+    LayerMgr-->>Canvas: 背景渲染完成
+    Canvas-->>SB: 预览更新
+
+    User->>AssetP: 拖拽角色「小樱」到画布
+    AssetP->>SB: onAddCharacter({charId, spriteUrl, name})
+    SB->>Canvas: addCharacter(charData, position='center')
+    Canvas->>LayerMgr: renderCharacter('xiaoying', {spriteUrl, position, scale:1.0})
+    LayerMgr-->>Canvas: 立绘渲染完成
+    Canvas-->>SB: 画布更新
+    SB->>PropP: 显示选中角色属性
+
+    User->>PropP: 调整缩放滑杆 1.0→1.2
+    PropP->>SB: onScaleChar('xiaoying', 1.2)
+    SB->>Canvas: scaleCharacter('xiaoying', 1.2)
+    Canvas->>LayerMgr: renderCharacter('xiaoying', {..., scale:1.2})
+    LayerMgr-->>Canvas: 重绘立绘
+    SB->>PropP: 更新属性显示
+
+    User->>SB: 输入对话文本「你好呀！」
+    SB->>Canvas: updateDialog({speaker:'小樱', text:'你好呀！'})
+    Canvas->>LayerMgr: showDialog('小樱', '你好呀！')
+    LayerMgr-->>Canvas: 对话框更新
+
+    User->>SB: 点击「导出脚本」
+    SB->>ExportM: show({config: currentConfig})
+    ExportM->>ExportM: 调用 SceneBuilderService.exportToScript(config)
+    ExportM-->>User: 显示生成的脚本片段
+    User->>ExportM: 点击「插入到编辑器」
+    ExportM->>Editor: window.dispatchEvent(galgame-insert)
+    Editor-->>User: 脚本已插入

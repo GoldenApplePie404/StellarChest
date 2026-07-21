@@ -1,0 +1,12 @@
+
+@chapter test1
+
+@label test1
+
+@bgm bgm
+
+@bg bg1
+
+
+金苹果派：你好
+金苹果派：接下来要做啥？

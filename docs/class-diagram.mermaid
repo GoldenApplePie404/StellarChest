@@ -1,0 +1,148 @@
+classDiagram
+    class DAWProject {
+        +string id
+        +string name
+        +number bpm
+        +number timeSignature
+        +number ppq
+        +Track[] tracks
+        +MixerChannel[] mixerChannels
+        +Pattern[] patterns
+        +ArrangementClip[] arrangement
+        +number masterVolume
+        +number masterPan
+    }
+
+    class Track {
+        +string id
+        +string name
+        +TrackType type
+        +MusicInstrument instrument
+        +string color
+        +string patternId
+        +number volume
+        +number pan
+        +boolean muted
+        +boolean solo
+        +boolean armed
+        +EffectSlot[] effects
+    }
+
+    class Note {
+        +number time
+        +number duration
+        +number midi
+        +number velocity
+        +boolean selected
+    }
+
+    class Pattern {
+        +string id
+        +string name
+        +number length
+        +Note[] notes
+        +number beatDivision
+    }
+
+    class MixerChannel {
+        +string id
+        +string trackId
+        +number volume
+        +number pan
+        +boolean muted
+        +boolean solo
+        +number levelL
+        +number levelR
+        +EffectSlot[] insertEffects
+        +SendEffect[] sendEffects
+    }
+
+    class EffectSlot {
+        +string id
+        +EffectType type
+        +boolean enabled
+        +Record~string,number~ params
+    }
+
+    class ArrangementClip {
+        +string id
+        +string trackId
+        +string patternId
+        +number startTime
+        +number duration
+        +number offset
+    }
+
+    class PlaybackState {
+        +boolean isPlaying
+        +boolean isRecording
+        +boolean isPaused
+        +number position
+        +boolean loopEnabled
+        +number loopStart
+        +number loopEnd
+        +boolean metronomeOn
+    }
+
+    DAWProject "1" *-- "many" Track
+    DAWProject "1" *-- "many" Pattern
+    DAWProject "1" *-- "many" MixerChannel
+    DAWProject "1" *-- "many" ArrangementClip
+    Track "1" *-- "many" EffectSlot
+    Track "1" --> "1" Pattern
+    Pattern "1" *-- "many" Note
+    MixerChannel "1" *-- "many" EffectSlot
+    ArrangementClip "1" --> "1" Pattern
+    ArrangementClip "1" --> "1" Track
+
+    class DAWStore {
+        +TransportSlice transport
+        +TrackSlice tracks
+        +MixerSlice mixer
+        +PatternSlice patterns
+        +UIState ui
+    }
+
+    class TransportSlice {
+        +boolean isPlaying
+        +boolean isRecording
+        +boolean isPaused
+        +number position
+        +number bpm
+        +boolean loopEnabled
+        +number loopStart
+        +number loopEnd
+        +boolean metronomeOn
+    }
+
+    class TrackSlice {
+        +Track[] tracks
+        +number activeTrackIndex
+        +string activePatternId
+    }
+
+    class MixerSlice {
+        +MixerChannel[] channels
+        +number masterVolume
+        +number masterPan
+    }
+
+    class PatternSlice {
+        +Pattern[] patterns
+        +ArrangementClip[] arrangement
+    }
+
+    class UIState {
+        +string activePanel
+        +boolean showBrowser
+        +boolean showMixer
+        +number pianoRollZoom
+        +number pianoRollScrollX
+        +number pianoRollScrollY
+    }
+
+    DAWStore *-- TransportSlice
+    DAWStore *-- TrackSlice
+    DAWStore *-- MixerSlice
+    DAWStore *-- PatternSlice
+    DAWStore *-- UIState

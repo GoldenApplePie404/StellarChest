@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="500" viewBox="0 0 300 500">
+  <rect width="300" height="500" fill="rgba(255,255,255,0.05)"/>
+  <!-- body silhouette (anime style) -->
+  <ellipse cx="150" cy="180" rx="45" ry="50" fill="#FFE0B2"/>
+  <!-- head -->
+  <circle cx="150" cy="100" r="40" fill="#FFE0B2"/>
+  <!-- hair -->
+  <ellipse cx="150" cy="80" rx="42" ry="35" fill="#5D4037"/>
+  <ellipse cx="130" cy="95" rx="20" ry="25" fill="#4E342E"/>
+  <!-- eyes -->
+  <ellipse cx="137" cy="95" rx="6" ry="7" fill="#FFFFFF"/>
+  <ellipse cx="163" cy="95" rx="6" ry="7" fill="#FFFFFF"/>
+  <circle cx="138" cy="96" r="4" fill="#4A148C"/>
+  <circle cx="164" cy="96" r="4" fill="#4A148C"/>
+  <circle cx="139" cy="94" r="1.5" fill="#FFFFFF"/>
+  <circle cx="165" cy="94" r="1.5" fill="#FFFFFF"/>
+  <!-- blush -->
+  <ellipse cx="130" cy="108" rx="8" ry="4" fill="#FF8A80" opacity="0.3"/>
+  <ellipse cx="170" cy="108" rx="8" ry="4" fill="#FF8A80" opacity="0.3"/>
+  <!-- mouth -->
+  <path d="M143 112 Q150 118 157 112" fill="none" stroke="#E57373" stroke-width="1.5"/>
+  <!-- clothing -->
+  <rect x="110" y="145" width="80" height="120" rx="5" fill="#E91E63" opacity="0.7"/>
+  <!-- collar -->
+  <path d="M130 145 L150 165 L170 145" fill="#F48FB1"/>
+  <!-- skirt -->
+  <path d="M110 265 L190 265 L200 350 L100 350 Z" fill="#7B1FA2" opacity="0.6"/>
+  <!-- legs -->
+  <rect x="118" y="350" width="22" height="100" rx="5" fill="#FFE0B2"/>
+  <rect x="160" y="350" width="22" height="100" rx="5" fill="#FFE0B2"/>
+  <!-- shoes -->
+  <rect x="112" y="440" width="34" height="15" rx="5" fill="#333333"/>
+  <rect x="154" y="440" width="34" height="15" rx="5" fill="#333333"/>
+</svg>

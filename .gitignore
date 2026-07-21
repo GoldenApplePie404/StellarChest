@@ -1,0 +1,58 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# uploaded user assets (also available via /uploads static route)
+/public/uploads/
+
+# production
+/build
+/dist
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env*.local
+.env
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# database (SQLite 全部产物，含用户真实 API Key，严禁入库)
+prisma/data/*.db*
+data/*.db*
+data/*.db.bak*
+
+# runtime logs
+devserver.log
+*.log
+
+# editor
+.vscode
+.idea
+
+# zip
+*.zip
+
+# workbuddy
+.workbuddy/

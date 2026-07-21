@@ -1,0 +1,111 @@
+{
+  "version": "1.1",
+  "lastUpdated": "2026-07-06T16:51:00+08:00",
+  "categories": [
+    {
+      "id": "background",
+      "name": "背景",
+      "path": "data/assets/background",
+      "icon": "Image"
+    },
+    {
+      "id": "bgm",
+      "name": "音乐(BGM)",
+      "path": "data/assets/bgm",
+      "icon": "Music"
+    },
+    {
+      "id": "icon",
+      "name": "图标",
+      "path": "data/assets/icon",
+      "icon": "Smile"
+    }
+  ],
+  "assets": [
+    {
+      "id": "bg_school_gate_001",
+      "name": "学校门口",
+      "category": "background",
+      "url": "/api/assets/file/学校门口.png",
+      "type": "image/png",
+      "size": 2769324,
+      "downloadCount": 3,
+      "description": "学校正门口场景，适合开学或放学等校园日常场景",
+      "tags": [
+        "校园",
+        "校门",
+        "场景"
+      ],
+      "license": "CC0",
+      "createdAt": "2026-07-06T11:36:00+08:00"
+    },
+    {
+      "id": "bg_hall_001",
+      "name": "报道大厅",
+      "category": "background",
+      "url": "/api/assets/file/报道大厅.png",
+      "type": "image/png",
+      "size": 3735143,
+      "downloadCount": 0,
+      "description": "室内大厅场景，适合社团招新、开学典礼等活动场景",
+      "tags": [
+        "室内",
+        "大厅",
+        "场景"
+      ],
+      "license": "CC0",
+      "createdAt": "2026-07-06T11:36:00+08:00"
+    },
+    {
+      "id": "bgm_campus_001",
+      "name": "校园BGM",
+      "category": "bgm",
+      "url": "/api/assets/file/bgm.ogg",
+      "type": "audio/ogg",
+      "size": 1923776,
+      "downloadCount": 2,
+      "description": "校园背景音乐，适合日常温馨或轻松愉快的场景",
+      "tags": [
+        "BGM",
+        "校园",
+        "音乐"
+      ],
+      "license": "CC0",
+      "createdAt": "2026-07-06T11:36:00+08:00"
+    },
+    {
+      "id": "icon_achievement_001",
+      "name": "成就图标",
+      "category": "icon",
+      "url": "/api/assets/file/achievement_icon.png",
+      "type": "image/png",
+      "size": 719384,
+      "downloadCount": 0,
+      "description": "游戏成就系统通用图标，可用于解锁成就展示",
+      "tags": [
+        "图标",
+        "成就",
+        "UI"
+      ],
+      "license": "CC0",
+      "createdAt": "2026-07-06T11:36:00+08:00"
+    },
+    {
+      "id": "icon_logo_001",
+      "name": "星之匣LOGO",
+      "category": "icon",
+      "url": "/api/assets/file/logo.png",
+      "type": "image/png",
+      "size": 226254,
+      "downloadCount": 0,
+      "description": "星之匣平台LOGO，敞开宝箱与星锁设计，可用于项目封面或水印",
+      "tags": [
+        "LOGO",
+        "星之匣",
+        "图标"
+      ],
+      "license": "CC0",
+      "createdAt": "2026-07-07T09:16:00+08:00"
+    }
+  ]
+}

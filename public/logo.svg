@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <defs>
+    <linearGradient id="lidGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FF7EB3"/>
+      <stop offset="100%" stop-color="#E85D8F"/>
+    </linearGradient>
+    <linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#C8A2E8"/>
+      <stop offset="100%" stop-color="#A878D8"/>
+    </linearGradient>
+    <linearGradient id="starGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFD700"/>
+      <stop offset="100%" stop-color="#FFB800"/>
+    </linearGradient>
+    <linearGradient id="innerGlow" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#FFE0EC"/>
+      <stop offset="100%" stop-color="#F3EAFA"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-10%" width="140%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#C8A2E8" flood-opacity="0.3"/>
+    </filter>
+    <filter id="starGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#FFD700" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- 背景光晕 -->
+  <ellipse cx="100" cy="120" rx="70" ry="55" fill="#FFE0EC" opacity="0.3"/>
+
+  <!-- 宝箱主体 -->
+  <rect x="40" y="90" width="120" height="72" rx="16" fill="url(#bodyGrad)" filter="url(#softShadow)"/>
+
+  <!-- 宝箱底部装饰线 -->
+  <rect x="40" y="142" width="120" height="6" rx="3" fill="#A878D8" opacity="0.5"/>
+  <circle cx="100" cy="145" r="3" fill="#FFD700" opacity="0.6"/>
+
+  <!-- 宝箱盖 -->
+  <path d="M 30 90 C 30 50, 170 50, 170 90 L 170 100 C 170 96, 30 96, 30 100 Z"
+        fill="url(#lidGrad)" filter="url(#softShadow)"/>
+
+  <!-- 箱盖弧形高光 -->
+  <path d="M 50 72 C 70 55, 130 55, 150 72"
+        stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.3"/>
+
+  <!-- 箱盖装饰铆钉 -->
+  <circle cx="60" cy="80" r="4" fill="#FFB7D5" opacity="0.6"/>
+  <circle cx="140" cy="80" r="4" fill="#FFB7D5" opacity="0.6"/>
+  <circle cx="100" cy="70" r="3" fill="#FFB7D5" opacity="0.5"/>
+
+  <!-- 锁扣底板 -->
+  <rect x="88" y="105" width="24" height="20" rx="6" fill="#FFD700" filter="url(#starGlow)"/>
+
+  <!-- 锁扣中的星形 -->
+  <polygon points="100,82 103,91 112,91 105,96 108,105 100,99 92,105 95,96 88,91 97,91"
+           fill="url(#starGrad)"/>
+
+  <!-- 箱内微光 -->
+  <ellipse cx="100" cy="120" rx="50" ry="25" fill="url(#innerGlow)" opacity="0.4"/>
+
+  <!-- 左侧飘出星点 -->
+  <circle cx="30" cy="75" r="2.5" fill="#FFD700" opacity="0.7"/>
+  <circle cx="22" cy="90" r="1.5" fill="#FFB7D5" opacity="0.5"/>
+  <circle cx="28" cy="60" r="1.5" fill="#FFD700" opacity="0.4"/>
+
+  <!-- 右侧飘出星点 -->
+  <circle cx="170" cy="78" r="2.5" fill="#FFD700" opacity="0.7"/>
+  <circle cx="178" cy="92" r="1.5" fill="#C8A2E8" opacity="0.5"/>
+  <circle cx="172" cy="58" r="2" fill="#FFD700" opacity="0.4"/>
+
+  <!-- 文字标识: 匣 -->
+  <text x="100" y="175" text-anchor="middle"
+        font-family="serif" font-size="22" font-weight="bold"
+        fill="url(#lidGrad)" opacity="0.9"
+        style="letter-spacing: 0.08em">星 之 匣</text>
+</svg>
