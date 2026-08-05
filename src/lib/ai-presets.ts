@@ -6,10 +6,10 @@
 //    实际请以你账号后台给出的地址为准（尤其 Seedream/Seedance 走火山方舟 Ark、
 //    Suno 多为第三方网关）。实施 P1 配置页时若与你的账号不符，请告诉我修正。
 
-/** 模态枚举：文本对话 / 绘画 / 音乐 / 视频 / 语音 */
-export type AIModality = 'chat' | 'image' | 'music' | 'video' | 'voice';
+/** 模态枚举：文本对话 / 绘画 / 音乐 / 视频 / 语音 / 剧本分析 */
+export type AIModality = 'chat' | 'image' | 'music' | 'video' | 'voice' | 'script_analyze';
 
-export const AI_MODALITIES: AIModality[] = ['chat', 'image', 'music', 'video', 'voice'];
+export const AI_MODALITIES: AIModality[] = ['chat', 'image', 'music', 'video', 'voice', 'script_analyze'];
 
 /** 模态中文名（UI 展示用） */
 export const AI_MODALITY_LABELS: Record<AIModality, string> = {
@@ -18,6 +18,7 @@ export const AI_MODALITY_LABELS: Record<AIModality, string> = {
   music: 'AI 音乐',
   video: 'AI 视频',
   voice: 'AI 语音',
+  script_analyze: '剧本分析',
 };
 
 /** 单个模型选项 */
@@ -212,6 +213,45 @@ export const AI_PRESETS: Record<AIModality, ProviderPreset[]> = {
       defaultEndpoint: 'https://api.fish.audio/v1',
       models: [
         { value: 'fish-speech-1.5', label: 'fish-speech-1.5' },
+      ],
+    },
+  ],
+  script_analyze: [
+    {
+      provider: 'deepseek',
+      label: 'DeepSeek',
+      defaultEndpoint: 'https://api.deepseek.com',
+      models: [
+        { value: 'deepseek-v4-pro', label: 'deepseek-v4-pro（推理模型）' },
+        { value: 'deepseek-chat', label: 'deepseek-chat' },
+      ],
+    },
+    {
+      provider: 'echo',
+      label: 'Echo-1.5',
+      defaultEndpoint: 'https://eapi.eqmemory.cn/v1',
+      apiKey: ECHO_DEV_TEST_KEY,
+      models: [
+        { value: 'Echo-1.5-Flash', label: 'Echo-1.5-Flash（纯文本，极速）' },
+        { value: 'Echo-1.5-Pro', label: 'Echo-1.5-Pro（多模态）' },
+      ],
+    },
+    {
+      provider: 'openai_compatible',
+      label: 'OpenAI 兼容',
+      defaultEndpoint: 'https://api.openai.com/v1',
+      models: [
+        { value: 'gpt-4o', label: 'gpt-4o' },
+        { value: 'gpt-4o-mini', label: 'gpt-4o-mini' },
+      ],
+    },
+    {
+      provider: 'claude',
+      label: 'Claude',
+      defaultEndpoint: 'https://api.anthropic.com/v1',
+      models: [
+        { value: 'claude-3-5-sonnet-latest', label: 'claude-3-5-sonnet' },
+        { value: 'claude-3-opus-latest', label: 'claude-3-opus' },
       ],
     },
   ],

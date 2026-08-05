@@ -20,6 +20,7 @@ const MODALITY_ICONS: Record<AIModality, string> = {
   music: 'fa-music',
   video: 'fa-video',
   voice: 'fa-microphone',
+  script_analyze: 'fa-book-open',
 };
 
 /** 单模态配置表单值 */

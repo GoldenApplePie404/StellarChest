@@ -8,6 +8,7 @@ import Button from '@/components/ui/Button';
 import Select from '@/components/ui/Select';
 import Card from '@/components/ui/Card';
 import StellarIcon from '@/components/StellarIcon';
+import ScriptAnalysisPanel from '@/components/ai/ScriptAnalysisPanel';
 import { AI_PRESETS, AI_MODALITY_LABELS, getDefaultForModality, type AIModality } from '@/lib/ai-presets';
 import type { AIChatMessage, AIMediaAttachment, AIGenerateProgress, RagSource } from '@/types/ai';
 
@@ -26,6 +27,7 @@ const MODES: { key: AIModality; label: string; icon: string; desc: string }[] = 
   { key: 'music', label: '文生乐', icon: 'fa-music', desc: '描述风格，生成音乐' },
   { key: 'video', label: '文生视频', icon: 'fa-video', desc: '描述镜头，生成视频' },
   { key: 'voice', label: '语音', icon: 'fa-microphone', desc: '输入文本，生成语音' },
+  { key: 'script_analyze' as AIModality, label: '剧本分析', icon: 'fa-book-open', desc: '上传剧本，AI 自动分析素材需求并生成提示词' },
 ];
 
 /** 各模态输入框占位符 */
@@ -35,6 +37,7 @@ const PLACEHOLDERS: Record<AIModality, string> = {
   music: '描述音乐风格与主题，例如：治愈系钢琴曲，适合 galgame 清晨场景',
   video: '描述镜头与画面，例如：第一人称穿过森林，电影感，暖色调',
   voice: '输入要朗读的文本，例如：欢迎来到星辰下的约定',
+  script_analyze: '在“剧本分析”模式下直接开始分析即可',
 };
 
 /** 系统提示预设 */
@@ -564,6 +567,7 @@ export default function AIPage(): React.JSX.Element {
             </div>
           )}
         </div>
+
       </aside>
 
       {/* 中：主区域 */}
@@ -673,8 +677,19 @@ export default function AIPage(): React.JSX.Element {
           </div>
         </div>
 
-        {/* 空状态首页（千问风格） */}
-        {isEmpty && (
+        {/* 空状态首页 —— 剧本分析模式用独立面板 */}
+        {isEmpty && mode === 'script_analyze' && (
+          <ScriptAnalysisPanel
+            onInsertPrompt={(text) => {
+              setMode('chat');
+              setInput(text);
+            }}
+            currentModel={model}
+          />
+        )}
+
+        {/* 空状态首页（千问风格）—— 非剧本分析 */}
+        {isEmpty && mode !== 'script_analyze' && (
           <div className="flex-1 flex flex-col items-center justify-center z-10 px-6 pb-20">
             <div className="animate-float mb-4">
               <div className="w-14 h-14 rounded-[22px] flex items-center justify-center text-white shadow-lg" style={{ background: 'var(--gradient-sakura)' }}>
