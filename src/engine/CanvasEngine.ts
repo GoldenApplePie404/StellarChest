@@ -28,7 +28,18 @@ interface BrushStyle {
   size: number;
   color: string;
   opacity: number;
+  /** 笔刷硬度 0~1, 1 为硬边, 越小边缘越柔和 */
+  hardness: number;
 }
+
+/** 文本工具设置 */
+interface TextStyle {
+  content: string;
+  fontSize: number;
+}
+
+/** 光标坐标回调 */
+type CursorMoveCallback = (x: number, y: number) => void;
 
 /** 笔画命令 (快照式 undo) */
 class StrokeSnapshotCommand implements DrawCommand {
@@ -62,11 +73,22 @@ export class CanvasEngine {
   private layers: Layer[] = [];
   private activeLayerIndex: number = -1;
   private tool: CanvasTool = 'brush';
-  private brush: BrushStyle = { size: 4, color: '#4A3F45', opacity: 1 };
+  private brush: BrushStyle = { size: 4, color: '#4A3F45', opacity: 1, hardness: 1 };
+  /** 背景色槽 (待用颜色, X 键与前景色交换) */
+  private backgroundColor: string = '#FFFFFF';
+  private textStyle: TextStyle = { content: '', fontSize: 24 };
   private isDrawing: boolean = false;
   private undoStack: DrawCommand[] = [];
   private redoStack: DrawCommand[] = [];
   private maxUndoSteps: number = 50;
+
+  /** 光标移动回调 (供状态栏显示坐标) */
+  private onCursorMove: CursorMoveCallback | null = null;
+  /** 最近一次光标位置 (逻辑坐标) */
+  private lastCursor: { x: number; y: number } = { x: 0, y: 0 };
+
+  /** 软边笔刷上一绘制点 (用于插值) */
+  private lastSoftPoint: { x: number; y: number } | null = null;
 
   // 矩形/圆/线/箭头 起点
   private shapeOrigin: { x: number; y: number } | null = null;
@@ -202,17 +224,63 @@ export class CanvasEngine {
     this.brush.opacity = Math.max(0, Math.min(1, opacity));
   }
 
+  /** 设置笔刷硬度 0~1 */
+  setBrushHardness(hardness: number): void {
+    this.brush.hardness = Math.max(0, Math.min(1, hardness));
+  }
+
+  /** 设置背景色槽 */
+  setBackgroundColor(color: string): void {
+    this.backgroundColor = color;
+  }
+
+  /** 获取背景色槽 */
+  getBackgroundColor(): string {
+    return this.backgroundColor;
+  }
+
+  /** 交换前景色与背景色 (X 键) */
+  swapColors(): void {
+    const tmp = this.brush.color;
+    this.brush.color = this.backgroundColor;
+    this.backgroundColor = tmp;
+  }
+
+  /** 设置文本内容 */
+  setTextContent(content: string): void {
+    this.textStyle.content = content;
+  }
+
+  /** 设置文本字号 */
+  setTextFontSize(size: number): void {
+    this.textStyle.fontSize = Math.max(8, Math.min(200, size));
+  }
+
+  /** 获取文本设置 */
+  getTextStyle(): TextStyle {
+    return { ...this.textStyle };
+  }
+
+  /** 注册光标移动回调 */
+  setCursorMoveCallback(cb: CursorMoveCallback | null): void {
+    this.onCursorMove = cb;
+  }
+
+  /** 获取最近光标位置 (逻辑坐标) */
+  getCursorPosition(): { x: number; y: number } {
+    return { ...this.lastCursor };
+  }
+
   /** 更新鼠标样式 */
   private updateCursor(): void {
     switch (this.tool) {
-      case 'brush':
-      case 'eraser':
-        this.mainCanvas.style.cursor = 'crosshair';
+      case 'text':
+        this.mainCanvas.style.cursor = 'text';
         break;
       case 'eyedropper':
-        this.mainCanvas.style.cursor = 'crosshair';
-        break;
       case 'fill':
+      case 'brush':
+      case 'eraser':
         this.mainCanvas.style.cursor = 'crosshair';
         break;
       default:
@@ -265,6 +333,11 @@ export class CanvasEngine {
       return;
     }
 
+    if (this.tool === 'text') {
+      this.placeText(Math.round(x), Math.round(y));
+      return;
+    }
+
     // 画笔/橡皮: 保存当前快照
     const beforeSnapshot = layerCtx.getImageData(
       0, 0,
@@ -273,6 +346,7 @@ export class CanvasEngine {
     );
 
     this.isDrawing = true;
+    this.lastSoftPoint = null;
 
     layerCtx.globalAlpha = this.brush.opacity;
     layerCtx.lineCap = 'round';
@@ -284,6 +358,15 @@ export class CanvasEngine {
     } else {
       layerCtx.globalCompositeOperation = 'source-over';
       layerCtx.strokeStyle = this.brush.color;
+    }
+
+    // 软边笔刷: 用径向渐变圆点绘制 (硬度 < 1)
+    if (this.brush.hardness < 1) {
+      this.drawSoftDab(layerCtx, x, y);
+      this.lastSoftPoint = { x, y };
+      this.renderAll();
+      this._beforeSnapshot = beforeSnapshot;
+      return;
     }
 
     layerCtx.lineWidth = this.brush.size;
@@ -320,6 +403,31 @@ export class CanvasEngine {
     }
 
     if (!this.isDrawing) return;
+
+    // 软边笔刷: 沿路径插值绘制渐变圆点, 避免断点
+    if (this.brush.hardness < 1) {
+      const layerCtx = this.getActiveCtx();
+      if (!layerCtx) return;
+      const last = this.lastSoftPoint;
+      if (last) {
+        const dist = Math.hypot(x - last.x, y - last.y);
+        const step = Math.max(2, this.brush.size * 0.25);
+        const count = Math.max(1, Math.floor(dist / step));
+        for (let i = 1; i <= count; i += 1) {
+          const t = i / count;
+          this.drawSoftDab(
+            layerCtx,
+            last.x + (x - last.x) * t,
+            last.y + (y - last.y) * t,
+          );
+        }
+      } else {
+        this.drawSoftDab(layerCtx, x, y);
+      }
+      this.lastSoftPoint = { x, y };
+      this.renderAll();
+      return;
+    }
 
     const layerCtx = this.getActiveCtx();
     if (!layerCtx) return;
@@ -549,6 +657,72 @@ export class CanvasEngine {
     return this.brush.color;
   }
 
+  /** 放置文本 (点击画布在指定位置写入文本内容) */
+  private placeText(x: number, y: number): void {
+    const activeLayer = this.layers[this.activeLayerIndex];
+    if (!activeLayer) return;
+
+    const layerCtx = activeLayer.canvas.getContext('2d');
+    if (!layerCtx) return;
+
+    const text = this.textStyle.content;
+    if (!text.trim()) return;
+
+    const beforeSnapshot = layerCtx.getImageData(
+      0, 0,
+      activeLayer.canvas.width,
+      activeLayer.canvas.height,
+    );
+
+    layerCtx.save();
+    layerCtx.globalAlpha = this.brush.opacity;
+    layerCtx.fillStyle = this.brush.color;
+    layerCtx.font = `${this.textStyle.fontSize}px system-ui, "Segoe UI", "Microsoft YaHei", sans-serif`;
+    layerCtx.textBaseline = 'top';
+
+    const lines = text.split('\n');
+    const lineHeight = this.textStyle.fontSize * 1.25;
+    lines.forEach((line, i) => {
+      layerCtx.fillText(line, x, y + i * lineHeight);
+    });
+
+    layerCtx.restore();
+
+    const afterSnapshot = layerCtx.getImageData(
+      0, 0,
+      activeLayer.canvas.width,
+      activeLayer.canvas.height,
+    );
+
+    this.pushUndo(new StrokeSnapshotCommand(beforeSnapshot, afterSnapshot, layerCtx));
+    this.renderAll();
+  }
+
+  /** 绘制软边圆点 (径向渐变, 用于硬度 < 1 的笔刷/橡皮) */
+  private drawSoftDab(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+  ): void {
+    const radius = Math.max(1, this.brush.size / 2);
+    const color = this.tool === 'eraser' ? '#000000' : this.brush.color;
+    const rgb = this.parseColor(color);
+    if (!rgb) return;
+
+    const inner = radius * this.brush.hardness;
+    const grad = ctx.createRadialGradient(x, y, inner, x, y, radius);
+    const alpha = this.brush.opacity;
+    grad.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`);
+    grad.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
+
+    ctx.save();
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
   // ============================================================
   // Undo / Redo
   // ============================================================
@@ -684,6 +858,8 @@ export class CanvasEngine {
   private onMouseMove(e: MouseEvent): void {
     e.preventDefault();
     const { x, y } = this.getCanvasCoords(e);
+    this.lastCursor = { x: Math.round(x), y: Math.round(y) };
+    this.onCursorMove?.(this.lastCursor.x, this.lastCursor.y);
     this.continueStroke(x, y);
   }
 

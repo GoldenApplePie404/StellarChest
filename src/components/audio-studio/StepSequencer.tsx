@@ -112,16 +112,37 @@ export default function StepSequencer(): React.JSX.Element {
       </div>
 
       {/* 可滚动轨道列表 */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto relative">
+        {/* 播放头竖线 (跨所有轨道行) */}
+        {isPlaying && (
+          <div
+            className="playhead"
+            style={{
+              left: 144 + currentBeat * CELL_SIZE,
+              height: activePattern.tracks.length * ROW_HEIGHT,
+              opacity: 1,
+            }}
+          />
+        )}
+
         {activePattern.tracks.map((track, trackIdx) => (
           <div
             key={track.id}
-            className={`flex border-b border-lavender-pale/40 transition-colors ${
-              trackIdx === activeTrackIndex ? 'bg-sakura-pale/10' : 'hover:bg-lavender-pale/10'
+            className={`track-row relative flex border-b border-lavender-pale/40 transition-colors ${
+              trackIdx === activeTrackIndex ? 'track-row-selected' : 'hover:bg-lavender-pale/10'
             }`}
             style={{ height: ROW_HEIGHT }}
             onClick={() => setActiveTrackIndex(trackIdx)}
           >
+            {/* 轨道色条 */}
+            <div
+              className="absolute left-0 top-0 bottom-0 w-[3px] z-10"
+              style={{
+                backgroundColor: track.color,
+                boxShadow: trackIdx === activeTrackIndex ? `0 0 8px ${track.color}` : 'none',
+                opacity: track.muted ? 0.35 : 1,
+              }}
+            />
             {/* 轨道信息栏 */}
             <div
               className="w-36 flex-shrink-0 border-r border-lavender-pale flex items-center gap-1 px-2 cursor-pointer"
@@ -175,7 +196,7 @@ export default function StepSequencer(): React.JSX.Element {
                     {hasNote && (
                       <div
                         className="w-4 h-4 rounded-sm shadow-sm transition-transform hover:scale-110"
-                        style={{ backgroundColor: track.color }}
+                        style={{ backgroundColor: track.color, boxShadow: `0 0 8px ${track.color}77` }}
                       />
                     )}
                   </button>

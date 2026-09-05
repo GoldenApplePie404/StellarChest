@@ -1,6 +1,7 @@
-'use client';
-import ImageCanvasTool from '@/components/tools/image/ImageCanvasTool';
+// 旧地址跳转到全屏新版画板
+import { redirect } from 'next/navigation';
 
-export default function ImageCanvasPage(): React.JSX.Element {
-  return <ImageCanvasTool />;
+export default function LegacyCanvasRedirectPage(): React.JSX.Element {
+  redirect('/canvas-studio');
+  return <></>;
 }

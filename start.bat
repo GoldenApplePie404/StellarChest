@@ -1,7 +1,7 @@
 @echo off
 cd /d "%~dp0"
 echo ========================================
-echo   Galgame Toolkit Launcher
+echo   StellarChest - Launcher
 echo   %cd%
 echo ========================================
 
@@ -79,9 +79,87 @@ if not exist "data\galgame_toolkit.db" (
     call npx prisma db push --accept-data-loss >nul 2>&1
 )
 
+rem ========================================
+rem  Mode selection
+rem ========================================
+echo.
+echo  Select mode:
+echo.
+echo    [1] Development (next dev)
+echo        - Hot reload, auto refresh on change
+echo.
+echo    [2] Production (next build + next start)
+echo        - Build first, best performance
+echo        - First run will wait for build
+echo.
+echo    [3] Build only (next build)
+echo        - Build without starting
+echo        - Then run: npm start
+echo.
+echo ========================================
+set /p choice=Enter [1/2/3] (default 2): 
+
+if "%choice%"=="" set choice=2
+if "%choice%"=="1" goto :dev
+if "%choice%"=="3" goto :build_only
+
+rem ---------- Production ----------
+:prod
+echo.
+echo ========================================
+echo   [PRODUCTION] Checking build...
+echo ========================================
+
+if not exist ".next\BUILD_ID" (
+    echo [INFO] No build found, running next build...
+    call npm run build
+    if errorlevel 1 (
+        echo [ERROR] Build failed
+        pause
+        exit /b
+    )
+) else (
+    echo [INFO] Build exists (.next\BUILD_ID)
+)
+
+echo.
 echo ========================================
 echo   http://localhost:3000
-echo   Press Ctrl+C to stop
+echo   Mode: PRODUCTION
+echo   Ctrl+C to stop
+echo ========================================
+call npm run start
+pause
+exit /b
+
+rem ---------- Development ----------
+:dev
+echo.
+echo ========================================
+echo   http://localhost:3000
+echo   Mode: DEVELOPMENT (next dev --webpack)
+echo   Ctrl+C to stop
 echo ========================================
 call npm run dev
 pause
+exit /b
+
+rem ---------- Build only ----------
+:build_only
+echo.
+echo ========================================
+echo   [BUILD ONLY] Running next build...
+echo ========================================
+call npm run build
+if errorlevel 1 (
+    echo [ERROR] Build failed
+    pause
+    exit /b
+)
+echo.
+echo ========================================
+echo   Build complete!
+echo   To start: npm run start
+echo ========================================
+pause
+exit /b

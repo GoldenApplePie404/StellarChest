@@ -6,8 +6,30 @@ import path from 'path';
 /** 项目根目录（运行时基准路径） */
 const PROJECT_ROOT = process.cwd();
 
+// ==================== 运行模式 ====================
+/**
+ * 应用运行模式
+ * - web:     普通 Web 部署（Vercel / Docker / start.bat），默认值
+ * - desktop: Electron 桌面壳，开启云端转发 + 系统数据目录
+ */
+export const APP_MODE = process.env.APP_MODE || 'web';
+
+/** 是否为桌面模式 */
+export const IS_DESKTOP = APP_MODE === 'desktop';
+
+/**
+ * 云端服务器地址（桌面版社区/素材/账户由此获取）
+ * Web 版始终为空字符串，不会触发任何转发逻辑
+ */
+export const CLOUD_API_BASE = (process.env.CLOUD_API_BASE || '').replace(/\/$/, '');
+
+/** 是否启用云端转发（桌面版 + 配了云端地址） */
+export const CLOUD_PROXY_ENABLED = IS_DESKTOP && CLOUD_API_BASE.length > 0;
+
 /** 数据存储根目录 */
-export const DATA_DIR = process.env.DATA_DIR || path.join(PROJECT_ROOT, 'data');
+export const DATA_DIR = IS_DESKTOP
+  ? (process.env.DESKTOP_DATA_DIR || path.join(PROJECT_ROOT, 'data'))
+  : (process.env.DATA_DIR || path.join(PROJECT_ROOT, 'data'));
 
 /** SQLite数据库文件路径 */
 export const DB_PATH = path.join(DATA_DIR, 'galgame_toolkit.db');

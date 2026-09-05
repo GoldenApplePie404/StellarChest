@@ -77,7 +77,7 @@ export interface AudioStudioState {
   toggleEffectEnabled: (channelId: string, effectId: string) => void;
 
   // Playlist 操作
-  addClipToPlaylist: (patternId: string, startBeat: number, trackIndex: number) => void;
+  addClipToPlaylist: (patternId: string, startBeat: number, trackIndex: number, label?: string, length?: number, color?: string) => void;
   removeClipFromPlaylist: (clipId: string) => void;
   moveClipInPlaylist: (clipId: string, newStartBeat: number, newTrackIndex: number) => void;
 
@@ -446,12 +446,16 @@ const useAudioStudioStore = create<AudioStudioState>()((set, get) => {
     // ============================================================
     // Playlist 操作
     // ============================================================
-    addClipToPlaylist: (patternId: string, startBeat: number, trackIndex: number) => {
+    addClipToPlaylist: (patternId: string, startBeat: number, trackIndex: number, label?: string, length?: number, color?: string) => {
       const clip: PlaylistClip = {
         id: generateId(),
         patternId,
         startBeat,
         trackIndex,
+        label: label ?? '',
+        type: 'Pattern',
+        length: length ?? 4,
+        color,
       };
       set((s) => ({ playlist: [...s.playlist, clip] }));
     },

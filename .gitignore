@@ -56,3 +56,9 @@ devserver.log
 
 # workbuddy
 .workbuddy/
+
+# ===== Electron 桌面端打包产物 =====
+/release/
+*.blockmap
+builder-effective-config.yaml
+

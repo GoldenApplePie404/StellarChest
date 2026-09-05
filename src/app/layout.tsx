@@ -4,7 +4,7 @@ import { ZCOOL_KuaiLe, Ma_Shan_Zheng, Noto_Sans_SC, Zen_Maru_Gothic, Shippori_Mi
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'katex/dist/katex.min.css';
 import './globals.css';
-import Navbar from '@/components/ui/Navbar';
+import NavbarSlot from '@/components/ui/NavbarSlot';
 
 const animeFont = ZCOOL_KuaiLe({
   weight: '400',
@@ -61,7 +61,7 @@ export default function RootLayout({
     <html lang="zh-CN" className={`${animeFont.variable} ${titleFont.variable} ${bodyFont.variable} ${zenMaruFont.variable} ${minchoFont.variable}`}>
       <body className="min-h-screen bg-background antialiased">
         {/* 导航栏 */}
-        <Navbar />
+        <NavbarSlot />
         {/* 主内容区域 */}
         <main className="page-transition">
           {children}

@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "Galgame创作者一站式工具平台 - 素材管理/脚本编写/AI辅助/在线预览游玩",
   "private": true,
+  "author": "星之匣 StellarChest Team",
+  "main": "electron/main.js",
   "scripts": {
     "dev": "next dev --webpack",
     "build": "next build",
@@ -14,7 +16,13 @@
     "db:seed": "npx tsx prisma/seed.ts",
     "db:seed-templates": "node prisma/seed-templates.js",
     "db:reset": "prisma migrate reset",
-    "setup": "npm run db:generate && npm run db:push && npm run db:seed"
+    "setup": "npm run db:generate && npm run db:push && npm run db:seed",
+    "dev:desktop": "electron .",
+    "build:desktop": "next build && electron-builder",
+    "build:desktop:win": "next build && electron-builder --win",
+    "build:desktop:mac": "next build && electron-builder --mac",
+    "build:desktop:linux": "next build && electron-builder --linux",
+    "pack:desktop": "next build && electron-builder --dir"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.3.0",
@@ -50,6 +58,7 @@
     "fluent-ffmpeg": "^2.1",
     "jose": "^6.0",
     "katex": "^0.17.0",
+    "konva": "^10.3.0",
     "lowlight": "^3.3.0",
     "lucide-react": "^1.23.0",
     "mermaid": "^11.16.0",
@@ -60,6 +69,7 @@
     "react": "^19.0",
     "react-dom": "^19.0",
     "react-image-crop": "^11.0.7",
+    "react-konva": "^19.2.5",
     "sharp": "^0.33",
     "tone": "^15.0.4",
     "uuid": "^11.0",
@@ -78,11 +88,62 @@
     "@types/react": "^19.0",
     "@types/react-dom": "^19.0",
     "@types/uuid": "^11.0",
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8",
     "postcss": "^8.4.31",
     "prisma": "^6.0",
     "tailwindcss": "^4.0",
     "ts-node": "^10.9",
     "tsx": "^4.23.7",
     "typescript": "^5.7"
-  }
+  },
+  "build": {
+    "appId": "com.stellarchest.app",
+    "productName": "StellarChest",
+    "icon": "electron/build/icon.ico",
+    "asar": false,
+    "compression": "maximum",
+    "directories": {
+      "output": "release",
+      "buildResources": "electron/build"
+    },
+    "files": [
+      "electron/**/*",
+      "public/**/*",
+      ".next/**/*",
+      "node_modules/**/*",
+      "!node_modules/.cache/**",
+      "package.json",
+      "prisma/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "artifactName": "星之匣 StellarChest Setup ${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "星之匣 StellarChest",
+      "runAfterFinish": false
+    },
+    "mac": {
+      "target": ["dmg"],
+      "category": "public.app-category.games"
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "category": "Game"
+    }
+  },
+  "electronDownload": {
+    "mirror": "https://cdn.npmmirror.com/binaries/electron/"
+  },
+  "electronBuilderBinariesMirror": "https://cdn.npmmirror.com/binaries/electron-builder-binaries/"
 }

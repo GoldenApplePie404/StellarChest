@@ -72,6 +72,7 @@ export const CANVAS_TOOL_LABELS: Record<CanvasTool, string> = {
   arrow: '箭头',
   fill: '填充',
   eyedropper: '取色器',
+  text: '文本',
 };
 
 // ============================================================
@@ -141,9 +142,15 @@ export const TOOL_NAV_TREE: ToolNavItem[] = [
       },
       {
         id: 'image-canvas',
-        label: '画布编辑',
+        label: '画布编辑（新版）',
         icon: 'Paintbrush',
-        path: '/tools/image/canvas',
+        path: '/canvas-studio',
+      },
+      {
+        id: 'image-canvas-legacy',
+        label: '画布编辑（旧版）',
+        icon: 'Paintbrush',
+        path: '/tools/image/canvas-legacy',
       },
       {
         id: 'image-ai',
@@ -175,7 +182,7 @@ export const TOOL_NAV_TREE: ToolNavItem[] = [
         id: 'audio-studio',
         label: '音乐工作室',
         icon: 'Music4',
-        path: '/audio-studio',
+        path: '/audio-studio-v2',
       },
       {
         id: 'audio-ai',

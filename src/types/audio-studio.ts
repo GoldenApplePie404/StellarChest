@@ -81,6 +81,14 @@ export interface PlaylistClip {
   patternId: string;
   startBeat: number;
   trackIndex: number;
+  /** 显示标签 */
+  label: string;
+  /** 片段类型 */
+  type: 'Pattern' | 'Audio';
+  /** 长度 (小节数) */
+  length: number;
+  /** 轨道颜色 */
+  color?: string;
 }
 
 /** 乐器选项 */

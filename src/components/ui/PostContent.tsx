@@ -24,9 +24,8 @@ interface CodeBlockInfo {
 export default function PostContent({ html }: PostContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mermaidReadyRef = useRef(false);
-  const processedRef = useRef(false);
 
-  // ---- 1. 初始化 Mermaid ----
+  // ---- 1. 初始化 Mermaid（只跑一次） ----
   useEffect(() => {
     (async () => {
       try {
@@ -45,15 +44,13 @@ export default function PostContent({ html }: PostContentProps) {
     })();
   }, []);
 
-  // ---- 2. 内容注入后处理（非 Mermaid 部分：KaTeX、代码块、表格等） ----
-  // 仅在首次挂载 + html 变化时执行，用 processedRef 防止 React 重渲染覆盖
+  // ---- 2. 内容处理（串行：先同步增强 KaTeX/代码块/表格，再等 Mermaid 初始化后渲染） ----
   useLayoutEffect(() => {
     if (!containerRef.current || !html) return;
-    if (processedRef.current) return;
-    processedRef.current = true;
     const root = containerRef.current;
 
-    // 逐项执行，各自 try-catch 隔离
+    // 每次 html 变化都重置 DOM，因为 React 会用新的 dangerouslySetInnerHTML 替换
+    // 所以这里不需要防重复，反而是每次都要重新增强
     const safeProcess = (fn: () => void, name: string) => {
       try { fn(); } catch (e) { console.warn('[PostContent] ' + name + ' error:', e); }
     };
@@ -65,20 +62,24 @@ export default function PostContent({ html }: PostContentProps) {
     safeProcess(() => enhanceHeadings(root), 'headings');
   }, [html]);
 
-  // ---- 3. Mermaid 渲染（轮询等待初始化完成） ----
+  // ---- 3. Mermaid 渲染（等待 Mermaid 初始化 + 串行执行） ----
   useEffect(() => {
     if (!containerRef.current || !html) return;
-    const checkReady = () => {
-      if (!mermaidReadyRef.current || !containerRef.current) {
-        setTimeout(checkReady, 200);
-        return;
+    let cancelled = false;
+
+    const tryRender = async () => {
+      // 等待 Mermaid 动态 import 完成（最多重试 30 次 = 6 秒）
+      for (let i = 0; i < 30; i++) {
+        if (cancelled) return;
+        if (mermaidReadyRef.current && containerRef.current) break;
+        await new Promise(r => setTimeout(r, 200));
       }
-      const root = containerRef.current;
-      (async () => {
-        await renderMermaidDiagrams(root);
-      })();
+      if (cancelled || !containerRef.current || !mermaidReadyRef.current) return;
+      await renderMermaidDiagrams(containerRef.current!);
     };
-    checkReady();
+    tryRender();
+
+    return () => { cancelled = true; };
   }, [html]);
 
   return (

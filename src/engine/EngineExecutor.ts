@@ -367,7 +367,17 @@ export class EngineExecutor {
 
     // @jump 直接跳转
     if (line.instruction.name === 'jump') {
-      handler.execute(ctx);
+      const targetLabel = String(ctx.params['label'] ?? '').trim();
+      this.emitEvent('line_executed', line);
+
+      if (!targetLabel || !this.jumpToLabel(targetLabel)) {
+        if (!targetLabel) {
+          console.warn(`@jump 缺少目标标签（第 ${line.lineNumber + 1} 行）`);
+        }
+        // 空标签或目标不存在时跳过该指令，避免引擎停在当前行。
+        this.stateManager.setCurrentLineIndex(this.stateManager.getCurrentLineIndex() + 1);
+        this.safeExecute();
+      }
       return;
     }
 
@@ -641,15 +651,16 @@ export class EngineExecutor {
    * 跳转到指定标签
    * @param labelName 标签名
    */
-  jumpToLabel(labelName: string): void {
+  jumpToLabel(labelName: string): boolean {
     const targetLine = this.parser.getLabelLine(labelName);
     if (targetLine < 0) {
       console.warn(`标签不存在: ${labelName}`);
-      return;
+      return false;
     }
     this.stateManager.setCurrentLineIndex(targetLine);
     this.emitEvent('scene_changed', { label: labelName, line: targetLine });
     this.safeExecute();
+    return true;
   }
 
   /**

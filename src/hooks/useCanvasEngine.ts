@@ -11,10 +11,17 @@ interface UseCanvasEngineReturn {
   engine: CanvasEngine | null;
   layers: Layer[];
   activeLayerIndex: number;
+  /** 光标逻辑坐标 (随鼠标移动更新) */
+  cursorPos: { x: number; y: number };
   setTool: (tool: CanvasTool) => void;
   setBrushSize: (size: number) => void;
   setBrushColor: (color: string) => void;
   setBrushOpacity: (opacity: number) => void;
+  setBrushHardness: (hardness: number) => void;
+  setBackgroundColor: (color: string) => void;
+  swapColors: () => void;
+  setTextContent: (content: string) => void;
+  setTextFontSize: (size: number) => void;
   setActiveLayer: (index: number) => void;
   setLayerVisibility: (index: number, visible: boolean) => void;
   setLayerOpacity: (index: number, opacity: number) => void;
@@ -36,6 +43,7 @@ export function useCanvasEngine(
   const [activeLayerIndex, setActiveLayerIndex] = useState<number>(0);
   const [canUndo, setCanUndo] = useState<boolean>(false);
   const [canRedo, setCanRedo] = useState<boolean>(false);
+  const [cursorPos, setCursorPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   /** 初始化引擎 */
   useEffect(() => {
@@ -44,6 +52,7 @@ export function useCanvasEngine(
 
     const engine = new CanvasEngine(canvas);
     engineRef.current = engine;
+    engine.setCursorMoveCallback((x, y) => setCursorPos({ x, y }));
     setLayers(engine.getLayers());
     setActiveLayerIndex(engine.getActiveLayerIndex());
 
@@ -100,6 +109,53 @@ export function useCanvasEngine(
       const engine = engineRef.current;
       if (!engine) return;
       engine.setBrushOpacity(opacity);
+    },
+    [],
+  );
+
+  /** 设置笔刷硬度 */
+  const setBrushHardness = useCallback(
+    (hardness: number) => {
+      const engine = engineRef.current;
+      if (!engine) return;
+      engine.setBrushHardness(hardness);
+    },
+    [],
+  );
+
+  /** 设置背景色槽 */
+  const setBackgroundColor = useCallback(
+    (color: string) => {
+      const engine = engineRef.current;
+      if (!engine) return;
+      engine.setBackgroundColor(color);
+    },
+    [],
+  );
+
+  /** 交换前景/背景色 */
+  const swapColors = useCallback(() => {
+    const engine = engineRef.current;
+    if (!engine) return;
+    engine.swapColors();
+  }, []);
+
+  /** 设置文本内容 */
+  const setTextContent = useCallback(
+    (content: string) => {
+      const engine = engineRef.current;
+      if (!engine) return;
+      engine.setTextContent(content);
+    },
+    [],
+  );
+
+  /** 设置文本字号 */
+  const setTextFontSize = useCallback(
+    (size: number) => {
+      const engine = engineRef.current;
+      if (!engine) return;
+      engine.setTextFontSize(size);
     },
     [],
   );
@@ -189,10 +245,16 @@ export function useCanvasEngine(
     engine: engineRef.current,
     layers,
     activeLayerIndex,
+    cursorPos,
     setTool,
     setBrushSize,
     setBrushColor,
     setBrushOpacity,
+    setBrushHardness,
+    setBackgroundColor,
+    swapColors,
+    setTextContent,
+    setTextFontSize,
     setActiveLayer,
     setLayerVisibility,
     setLayerOpacity,

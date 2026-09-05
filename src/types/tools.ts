@@ -63,7 +63,8 @@ export type CanvasTool =
   | 'line'
   | 'arrow'
   | 'fill'
-  | 'eyedropper';
+  | 'eyedropper'
+  | 'text';
 
 /** 画布图层 */
 export interface CanvasLayer {

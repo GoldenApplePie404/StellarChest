@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
       { protocol: 'http', hostname: '**' },
     ],
   },
-  // 实验性功能
+  // 图片域名白名单实验性功能
   experimental: {
     serverActions: {
       bodySizeLimit: '50mb',
